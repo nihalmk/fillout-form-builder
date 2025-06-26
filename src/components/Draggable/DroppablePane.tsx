@@ -3,10 +3,9 @@ import { useDroppable } from "@dnd-kit/core";
 
 interface DraggableItemProps {
   children: React.ReactNode;
-  onDrop: (id: string) => void;
 }
 
-const DroppablePane: React.FC<DraggableItemProps> = ({ children, onDrop }) => {
+const DroppablePane: React.FC<DraggableItemProps> = ({ children }) => {
   const { setNodeRef, isOver } = useDroppable({ id: "droppable-pane" });
 
   return (

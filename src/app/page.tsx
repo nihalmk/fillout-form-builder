@@ -1,12 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { DndContext, DragOverlay } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+} from "@dnd-kit/core";
 import DraggableItem from "@/components/Draggable/DraggableItem";
 import DroppablePane from "@/components/Draggable/DroppablePane";
-import PageSelectionButton, {
-  Page,
-} from "@/components/PageEditFooter/PageSelectionButton";
+import { Page } from "@/components/PageEditFooter/PageSelectionButton";
 import PageNavigation from "@/components/PageEditFooter/PageNavigation";
 
 const COMPONENTS = [
@@ -31,14 +34,14 @@ export default function Home() {
     { id: 4, label: "Ending", icon: "circle-check" },
   ]);
 
-  const handleDragStart = (event: any) => {
+  const handleDragStart = (event: DragStartEvent) => {
     setActiveItem({
       id: `${event.active.id}-${Date.now()}`,
-      type: event.active.id,
+      type: event.active.id as string,
     }); // generate a unique ID
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { over } = event;
     if (over && over.id === "droppable-pane" && activeItem) {
       setDroppedItems((items) => [...items, activeItem]);
@@ -75,7 +78,7 @@ export default function Home() {
           {/* Right Pane */}
           <div className="w-[70%] flex-1 flex flex-col bg-white h-[calc(100vh-64px)]">
             <div className="flex-1 h-full m-4 bg-gray-100 rounded">
-              <DroppablePane onDrop={() => {}}>
+              <DroppablePane>
                 <h2 className="text-lg font-semibold mb-2">
                   Form Preview - {selectedPage?.label}
                 </h2>
