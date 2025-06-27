@@ -133,7 +133,7 @@ const PageSelectionButton = ({
         onPointerDownCapture={() => {
           onSelect(page);
         }}
-        className={`h-8 flex items-center gap-2 px-2.5 py-1 rounded-lg outline outline-neutral-200 cursor-pointer ${
+        className={`h-8 flex items-center gap-2 px-2.5 py-1 rounded-lg outline  outline-[0.50px] outline-offset-[-0.50px] outline-neutral-200 cursor-pointer ${
           isSelected
             ? "bg-white shadow-[0px_1px_3px_0px_rgba(0,0,0,0.04)] shadow-[0px_1px_1px_0px_rgba(0,0,0,0.02)]"
             : `${

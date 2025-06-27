@@ -86,7 +86,7 @@ export default function Home() {
 
           {/* Right Pane */}
           <div className="w-[70%] flex-1 flex flex-col bg-white h-[calc(100vh-64px)]">
-            <div className="flex-1 h-full m-4 bg-gray-100 rounded">
+            <div className="flex-1 h-full m-4 bg-gray-100 rounded h-[calc(100vh-180px)] overflow-y-auto ">
               <DroppablePane>
                 <h2 className="text-lg font-semibold mb-2">
                   Form Preview - {selectedPage?.label}
@@ -112,7 +112,7 @@ export default function Home() {
                 ))}
               </DroppablePane>
             </div>
-            <div className="bg-white flex justify-start gap-2">
+            <div className="relative z-10 bg-white flex justify-start gap-2 shadow-[0_-2px_5px_rgba(0,0,0,0.05)]">
               <PageNavigation
                 pages={pages}
                 setPages={setPages}
@@ -123,7 +123,7 @@ export default function Home() {
               />
             </div>
           </div>
-          <DragOverlay>
+          <DragOverlay zIndex={50}>
             {activeItem ? (
               <DraggableItem
                 id={activeItem.id}

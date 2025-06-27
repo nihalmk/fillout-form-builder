@@ -61,7 +61,7 @@ const ScrollContainer: React.FC<ScrollContainerProps> = ({
   };
 
   return (
-    <div className="relative flex items-center w-full px-4 z-[9999]">
+    <div className="relative flex items-center w-full px-4">
       {showLeftArrow && (
         <button
           onClick={scrollLeft}
