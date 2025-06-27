@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
+import { useSortable } from "@dnd-kit/sortable";
 import Icon from "../Icons/Icon";
-import PageButtonMenu from "../ContextMenu/PageButtonMenu";
+import PageButtonMenu, { MenuItem } from "../ContextMenu/PageButtonMenu";
 
 export interface Page {
   id: number;
@@ -25,6 +26,14 @@ const PageSelectionButton = ({
   isLast,
 }: PageButtonProps) => {
   const buttonRef = useRef<HTMLDivElement>(null);
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: page.id });
 
   const [editing, setEditing] = useState(false);
   const [btnFocused, setBtnFocused] = useState(false);
@@ -42,6 +51,49 @@ const PageSelectionButton = ({
     setEditing(false);
   };
 
+  // Define menu items for the context menu
+  const pageMenuItems: MenuItem[] = [
+    {
+      id: "set-as-first",
+      text: "Set as first page",
+      iconName: "flag-priority",
+      onClick: () => {
+        console.log("Set as first page clicked for:", page.id);
+        // Implement logic to set this page as the first page
+      },
+    },
+    {
+      id: "rename",
+      text: "Rename",
+      iconName: "pencil-line",
+      onClick: () => {
+        setEditing(true); // Re-enable editing
+        console.log("Rename clicked for:", page.id);
+      },
+    },
+    {
+      id: "copy",
+      text: "Copy",
+      iconName: "clipboard",
+      onClick: () => console.log("Copy clicked"),
+    },
+    {
+      id: "duplicate",
+      text: "Duplicate",
+      iconName: "square-behind-square",
+      onClick: () => console.log("Duplicate clicked"),
+    },
+    {
+      id: "delete",
+      text: "Delete",
+      iconName: "trash-can",
+      onClick: () => console.log("Delete clicked for:", page.id),
+      isDestructive: true,
+      className: "py-3", // Apply custom padding for delete
+      addDivider: true,
+    },
+  ];
+
   const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -55,10 +107,18 @@ const PageSelectionButton = ({
   return (
     <div className="flex items-center">
       {contextMenu && (
-        <PageButtonMenu onClose={closeContextMenu} contextMenu={contextMenu} />
+        <PageButtonMenu
+          onClose={closeContextMenu}
+          contextMenu={contextMenu}
+          menuItems={pageMenuItems}
+        />
       )}
       <div
-        ref={buttonRef}
+        ref={(node) => {
+          // Combine dnd-kit's ref and our local ref
+          setNodeRef(node); // For dnd-kit to track the draggable node
+          buttonRef.current = node; // For context menu positioning
+        }}
         onMouseEnter={() => setBtnFocused(true)}
         onMouseLeave={() => setBtnFocused(false)}
         onClick={() => onSelect(page)}
@@ -74,6 +134,16 @@ const PageSelectionButton = ({
             : "outline-gray-400 hover:outline-blue-600"
         }`}
         onDoubleClick={onDoubleClick}
+        style={{
+          transform: transform
+            ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+            : undefined,
+          transition,
+          zIndex: isDragging ? 9999 : "auto", // Bring to front when dragging
+          cursor: isDragging ? "move" : "", // Bring to front when dragging
+        }}
+        {...attributes} // Apply accessibility attributes
+        {...listeners} // Apply drag event listeners
       >
         <Icon image={`${page.icon}${!isSelected ? "-disabled" : ""}`} />
         {editing ? (
@@ -93,7 +163,6 @@ const PageSelectionButton = ({
           </div>
         )}
       </div>
-
       <div
         className="flex items-center cursor-pointer h-full py-2"
         onMouseEnter={() => setAddPageBtnFocused(true)}

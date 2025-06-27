@@ -62,6 +62,9 @@ export default function Home() {
       setSelectedPage(pages[0]);
     }
   }, [pages, selectedPage]);
+
+  /* TODO: Functionality incomplete - Added for template design */
+
   return (
     <DndContext
       onDragStart={handleDragStart}

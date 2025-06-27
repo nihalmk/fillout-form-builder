@@ -1,4 +1,19 @@
 import React from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  arrayMove,
+  horizontalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import PageSelectionButton, { Page } from "./PageSelectionButton";
 import AddPageButton from "./AddPageButton";
 
@@ -63,23 +78,54 @@ const PageNavigation: React.FC<PageNavigationProps> = ({
     });
   };
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      setPages((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over?.id);
+
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
   return (
     <div className="overflow-x-auto w-full">
-      <div className="flex items-center p-4 w-max">
-        {pages.map((page, idx) => (
-          <PageSelectionButton
-            key={page.id}
-            page={page}
-            isSelected={selectedPage?.id === page.id}
-            onPageNameChange={(val) => handleNameChange(page.id, val)}
-            onSelect={onSelect}
-            handleAddPage={handleAddPage}
-            isLast={idx === pages.length - 1}
-          />
-        ))}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={pages.map((p) => p.id)}
+          strategy={horizontalListSortingStrategy}
+        >
+          <div className="flex items-center p-4 w-max">
+            {pages.map((page, idx) => (
+              <PageSelectionButton
+                key={page.id}
+                page={page}
+                isSelected={selectedPage?.id === page.id}
+                onPageNameChange={(val) => handleNameChange(page.id, val)}
+                onSelect={onSelect}
+                handleAddPage={handleAddPage}
+                isLast={idx === pages.length - 1}
+              />
+            ))}
 
-        <AddPageButton onClick={() => handleAddPage(pages.length)} />
-      </div>
+            <AddPageButton onClick={() => handleAddPage(pages.length)} />
+          </div>
+        </SortableContext>
+      </DndContext>
     </div>
   );
 };
