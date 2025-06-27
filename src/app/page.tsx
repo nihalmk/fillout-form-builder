@@ -55,8 +55,13 @@ export default function Home() {
 
   // In case selected page changes it's name
   useEffect(() => {
-    setSelectedPage(pages.find((p) => p.id === selectedPage?.id));
-  }, [pages]);
+    const page = pages.find((p) => p.id === selectedPage?.id);
+    if (page) {
+      setSelectedPage(page);
+    } else {
+      setSelectedPage(pages[0]);
+    }
+  }, [pages, selectedPage]);
   return (
     <DndContext
       onDragStart={handleDragStart}

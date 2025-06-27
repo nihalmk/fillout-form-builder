@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Icon from "../Icons/Icon";
+import PageButtonMenu from "../ContextMenu/PageButtonMenu";
 
 export interface Page {
   id: number;
@@ -23,8 +24,14 @@ const PageSelectionButton = ({
   handleAddPage,
   isLast,
 }: PageButtonProps) => {
+  const buttonRef = useRef<HTMLDivElement>(null);
+
   const [editing, setEditing] = useState(false);
   const [btnFocused, setBtnFocused] = useState(false);
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const [addPageBtnFocused, setAddPageBtnFocused] = useState(false);
 
   const onDoubleClick = () => {
@@ -34,9 +41,24 @@ const PageSelectionButton = ({
   const handleBlur = () => {
     setEditing(false);
   };
+
+  const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setContextMenu({ x: rect.left, y: rect.top });
+    }
+  };
+
+  const closeContextMenu = () => setContextMenu(null);
   return (
     <div className="flex items-center">
+      {contextMenu && (
+        <PageButtonMenu onClose={closeContextMenu} contextMenu={contextMenu} />
+      )}
       <div
+        ref={buttonRef}
         onMouseEnter={() => setBtnFocused(true)}
         onMouseLeave={() => setBtnFocused(false)}
         onClick={() => onSelect(page)}
@@ -65,7 +87,11 @@ const PageSelectionButton = ({
         ) : (
           <span className="max-w-[8ch] truncate">{page.label}</span>
         )}
-        {isSelected && !editing && <Icon image="dot-menu" />}
+        {isSelected && !editing && (
+          <div onClick={handleContextMenu}>
+            <Icon image="dot-menu" />
+          </div>
+        )}
       </div>
 
       <div

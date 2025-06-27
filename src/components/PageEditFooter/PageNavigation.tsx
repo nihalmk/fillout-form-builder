@@ -78,7 +78,7 @@ const PageNavigation: React.FC<PageNavigationProps> = ({
           />
         ))}
 
-        <AddPageButton onClick={handleAddPage} />
+        <AddPageButton onClick={() => handleAddPage(pages.length)} />
       </div>
     </div>
   );
