@@ -41,7 +41,7 @@ const PageButtonMenu: React.FC<PageButtonProps> = ({
   const menu = (
     <div
       ref={contextRef}
-      className="cursor-pointer w-60 text-zinc-900 absolute bg-white shadow-md border rounded-xl border-neutral-200 shadow-[0px_1px_3px_0px_rgba(0,0,0,0.04)] shadow-[0px_1px_1px_0px_rgba(0,0,0,0.02)]"
+      className="z-100 cursor-pointer w-60 text-zinc-900 absolute bg-white shadow-md border rounded-xl border-neutral-200 shadow-[0px_1px_3px_0px_rgba(0,0,0,0.04)] shadow-[0px_1px_1px_0px_rgba(0,0,0,0.02)]"
       style={{
         top: contextMenu.y,
         left: contextMenu.x,

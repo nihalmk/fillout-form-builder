@@ -8,6 +8,7 @@ import {
   useSensors,
   DragEndEvent,
 } from "@dnd-kit/core";
+import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
 import {
   SortableContext,
   sortableKeyboardCoordinates,
@@ -106,6 +107,7 @@ const PageNavigation: React.FC<PageNavigationProps> = ({
   return (
     <ScrollContainer dependencies={pages}>
       <DndContext
+        modifiers={[restrictToHorizontalAxis]}
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}

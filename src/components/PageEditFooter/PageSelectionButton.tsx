@@ -27,6 +27,7 @@ const PageSelectionButton = ({
 }: PageButtonProps) => {
   const buttonRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const addPageTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Ref to store timeout ID
 
   const {
     attributes,
@@ -113,6 +114,15 @@ const PageSelectionButton = ({
       inputRef.current.select(); // optional
     }
   }, [editing]);
+
+  // Cleanup timeout on component unmount
+  useEffect(() => {
+    return () => {
+      if (addPageTimeoutRef.current) {
+        clearTimeout(addPageTimeoutRef.current);
+      }
+    };
+  }, []);
   return (
     <div className="flex items-center">
       {contextMenu && (
@@ -182,8 +192,20 @@ const PageSelectionButton = ({
       </div>
       <div
         className="flex items-center cursor-pointer h-full py-2"
-        onMouseEnter={() => setAddPageBtnFocused(true)}
-        onMouseLeave={() => setAddPageBtnFocused(false)}
+        onMouseEnter={() => {
+          if (addPageTimeoutRef.current) {
+            clearTimeout(addPageTimeoutRef.current);
+          }
+          addPageTimeoutRef.current = setTimeout(() => {
+            setAddPageBtnFocused(true);
+          }, 150); // Delay by 150 milliseconds
+        }}
+        onMouseLeave={() => {
+          if (addPageTimeoutRef.current) {
+            clearTimeout(addPageTimeoutRef.current);
+          }
+          setAddPageBtnFocused(false); // Hide immediately on mouse leave
+        }}
         onClick={() => handleAddPage(page.id)}
       >
         <div className="w-5 h-[1.50px] border-t border-dashed border-stone-300" />

@@ -3,7 +3,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ## TODO
 
 - Drag and drop support for mobile
--
+- Use clsx for a cleaner file with less cluttered class name texts
 
 ## Getting Started
 
