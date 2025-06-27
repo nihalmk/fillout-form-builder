@@ -15,6 +15,7 @@ import PageNavigation from "@/components/PageEditFooter/PageNavigation";
 const COMPONENTS = [
   { id: "textbox", label: "Text Box" },
   { id: "dropdown", label: "Dropdown" },
+  // Add more?
 ];
 
 type ActiveItem = {
@@ -38,7 +39,7 @@ export default function Home() {
     setActiveItem({
       id: `${event.active.id}-${Date.now()}`,
       type: event.active.id as string,
-    }); // generate a unique ID
+    });
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -63,7 +64,7 @@ export default function Home() {
     }
   }, [pages, selectedPage]);
 
-  /* TODO: Functionality incomplete - Added for template design */
+  /* TODO: Page component drag & drop functionality incomplete - Added for template design */
 
   return (
     <DndContext
@@ -111,7 +112,7 @@ export default function Home() {
                 ))}
               </DroppablePane>
             </div>
-            <div className="p-4 bg-white flex justify-start gap-2 overflow-y-auto">
+            <div className="bg-white flex justify-start gap-2">
               <PageNavigation
                 pages={pages}
                 setPages={setPages}
@@ -123,14 +124,14 @@ export default function Home() {
             </div>
           </div>
           <DragOverlay>
-            {/* {activeItem ? (
+            {activeItem ? (
               <DraggableItem
                 id={activeItem.id}
                 label={
                   COMPONENTS.find((c) => c.id === activeItem.type)?.label || ""
                 }
               />
-            ) : null} */}
+            ) : null}
           </DragOverlay>
         </main>
       </div>

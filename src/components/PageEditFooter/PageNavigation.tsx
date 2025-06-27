@@ -16,6 +16,7 @@ import {
 } from "@dnd-kit/sortable";
 import PageSelectionButton, { Page } from "./PageSelectionButton";
 import AddPageButton from "./AddPageButton";
+import ScrollContainer from "../Scroll/ScrollContainer";
 
 interface PageNavigationProps {
   onSelect: (page: Page) => void;
@@ -99,7 +100,7 @@ const PageNavigation: React.FC<PageNavigationProps> = ({
   };
 
   return (
-    <div className="overflow-x-auto w-full">
+    <ScrollContainer dependencies={pages}>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -126,7 +127,7 @@ const PageNavigation: React.FC<PageNavigationProps> = ({
           </div>
         </SortableContext>
       </DndContext>
-    </div>
+    </ScrollContainer>
   );
 };
 

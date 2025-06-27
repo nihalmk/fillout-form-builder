@@ -1,4 +1,6 @@
 import React, { MouseEvent, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
+
 import Icon from "../Icons/Icon";
 
 interface PageButtonProps {
@@ -36,7 +38,7 @@ const PageButtonMenu: React.FC<PageButtonProps> = ({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
-  return (
+  const menu = (
     <div
       ref={contextRef}
       className="cursor-pointer w-60 text-zinc-900 absolute bg-white shadow-md border rounded-xl border-neutral-200 shadow-[0px_1px_3px_0px_rgba(0,0,0,0.04)] shadow-[0px_1px_1px_0px_rgba(0,0,0,0.02)]"
@@ -51,33 +53,33 @@ const PageButtonMenu: React.FC<PageButtonProps> = ({
           Settings
         </div>
       </div>
-      {menuItems.map((item, idx) => (
-        <div className="px-3" key={idx}>
-          {/* Can update menuItems prop to */}
-          {item.addDivider && (
-            <div className="gap-2 self-stretch h-[0.50px] relative bg-neutral-200" />
-          )}
-          <button
-            key={item.id}
-            onClick={() => {
-              item.onClick();
-              onClose(); // Close menu after clicking an item
-            }}
-            className={`flex gap-2 w-full text-left py-1 hover:bg-gray-100 text-sm ${
-              item.isDestructive ? "text-red-500" : ""
-            } ${item.className || ""}`}
-          >
-            <Icon image={item.iconName} />
-            <span>{item.text}</span>
-          </button>
-        </div>
-      ))}
-      {/* <div className="flex gap-2 w-full text-left text-red-500 px-3 py-3 hover:bg-gray-100 rounded-b-xl text-sm">
-        <Icon image="trash-can"></Icon>
-        <span>Delete</span>
-      </div> */}
+      <div className="p-3">
+        {menuItems.map((item, idx) => (
+          <div key={idx}>
+            {item.addDivider && (
+              <div className="pb-3">
+                <div className="gap-2 self-stretch h-[0.50px] relative bg-neutral-200" />
+              </div>
+            )}
+            <button
+              key={item.id}
+              onClick={() => {
+                item.onClick();
+                onClose();
+              }}
+              className={`flex gap-2 w-full text-left py-1 hover:bg-gray-100 text-sm ${
+                item.isDestructive ? "text-red-500" : ""
+              } ${item.className || ""}`}
+            >
+              <Icon image={item.iconName} />
+              <span>{item.text}</span>
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
+  return ReactDOM.createPortal(menu, document.body);
 };
 
 export default PageButtonMenu;

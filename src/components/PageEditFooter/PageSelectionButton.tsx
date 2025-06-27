@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import Icon from "../Icons/Icon";
 import PageButtonMenu, { MenuItem } from "../ContextMenu/PageButtonMenu";
@@ -26,6 +26,8 @@ const PageSelectionButton = ({
   isLast,
 }: PageButtonProps) => {
   const buttonRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const {
     attributes,
     listeners,
@@ -89,7 +91,6 @@ const PageSelectionButton = ({
       iconName: "trash-can",
       onClick: () => console.log("Delete clicked for:", page.id),
       isDestructive: true,
-      className: "py-3", // Apply custom padding for delete
       addDivider: true,
     },
   ];
@@ -97,6 +98,7 @@ const PageSelectionButton = ({
   const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
+
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       setContextMenu({ x: rect.left, y: rect.top });
@@ -104,6 +106,13 @@ const PageSelectionButton = ({
   };
 
   const closeContextMenu = () => setContextMenu(null);
+
+  useEffect(() => {
+    if (editing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select(); // optional
+    }
+  }, [editing]);
   return (
     <div className="flex items-center">
       {contextMenu && (
@@ -121,7 +130,9 @@ const PageSelectionButton = ({
         }}
         onMouseEnter={() => setBtnFocused(true)}
         onMouseLeave={() => setBtnFocused(false)}
-        onClick={() => onSelect(page)}
+        onPointerDownCapture={() => {
+          onSelect(page);
+        }}
         className={`h-8 flex items-center gap-2 px-2.5 py-1 rounded-lg outline outline-neutral-200 cursor-pointer ${
           isSelected
             ? "bg-white shadow-[0px_1px_3px_0px_rgba(0,0,0,0.04)] shadow-[0px_1px_1px_0px_rgba(0,0,0,0.02)]"
@@ -140,17 +151,19 @@ const PageSelectionButton = ({
             : undefined,
           transition,
           zIndex: isDragging ? 9999 : "auto", // Bring to front when dragging
-          cursor: isDragging ? "move" : "", // Bring to front when dragging
+          cursor: isDragging ? "move" : "",
         }}
-        {...attributes} // Apply accessibility attributes
-        {...listeners} // Apply drag event listeners
+        {...(editing ? {} : { ...attributes, ...listeners })}
       >
         <Icon image={`${page.icon}${!isSelected ? "-disabled" : ""}`} />
         {editing ? (
           <input
+            ref={inputRef}
             className="bg-transparent outline-none border-b border-blue-400 w-24"
             value={page.label}
-            onChange={(e) => onPageNameChange(e.target.value)}
+            onChange={(e) => {
+              onPageNameChange(e.target.value);
+            }}
             onBlur={handleBlur}
             autoFocus
           />
@@ -158,7 +171,11 @@ const PageSelectionButton = ({
           <span className="max-w-[8ch] truncate">{page.label}</span>
         )}
         {isSelected && !editing && (
-          <div onClick={handleContextMenu}>
+          <div
+            onPointerDownCapture={(e) => {
+              handleContextMenu(e);
+            }}
+          >
             <Icon image="dot-menu" />
           </div>
         )}
@@ -185,18 +202,6 @@ const PageSelectionButton = ({
       </div>
     </div>
   );
-  //   return (
-  //     <div className="cursor-pointer h-8 p-2 bg-white rounded-lg  outline outline-[0.50px] outline-offset-[-0.50px] outline-blue-600 inline-flex justify-center items-center gap-2 overflow-hidden">
-  //       <div className="flex justify-start items-center gap-1.5">
-  //         <div className="w-5 h-5 relative overflow-hidden">
-  //           <Icon image="file-text" />
-  //         </div>
-  //         <div className="text-center justify-start text-zinc-900 text-sm font-medium leading-tight">
-  //           {text}
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
 };
 
 export default PageSelectionButton;
